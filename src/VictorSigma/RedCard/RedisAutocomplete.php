@@ -45,7 +45,7 @@ class RedisAutocomplete {
 		if (is_array($word)) {
 			// If an array of words is passed in then recursively call on each element
 			foreach ($word as $w) {
-				$array = array_merge($array, $this->WordPrefixes($w));
+				$array = array_merge($array, $this->wordPrefixes($w));
 			}
 			return $array;
 		}
@@ -67,20 +67,20 @@ class RedisAutocomplete {
 	}
 	
 	public function remove($id) {
-		$phrase = $this->redis->hget($this->MetaKey('ids'), $id);
+		$phrase = $this->redis->hget($this->metaKey('ids'), $id);
 		if (!$phrase) return false;
 		
-		$prefixes = $this->WordPrefixes(explode(' ', $phrase));
+		$prefixes = $this->wordPrefixes(explode(' ', $phrase));
 		
 		foreach ($prefixes as $prefix) {
-			$this->redis->zrem($this->PrefixKey($prefix), $id);
+			$this->redis->zrem($this->prefixKey($prefix), $id);
 		}
-		$this->redis->hdel($this->MetaKey('ids'), $id);
-		$this->redis->hdel($this->MetaKey('objects'), $id);
+		$this->redis->hdel($this->metaKey('ids'), $id);
+		$this->redis->hdel($this->metaKey('objects'), $id);
 	}
 	
 	public function hasID($id) {
-		return $this->redis->hget($this->MetaKey('ids'), $id);
+		return $this->redis->hget($this->metaKey('ids'), $id);
 	}
 	
 	public function store($id, $phrase = NULL, $score = 1, $data = NULL) {
@@ -102,30 +102,30 @@ class RedisAutocomplete {
 		
 		if ($obj['data'] === NULL) unset($obj['data']);
 		
-		if ($this->HasID($obj['id'])) $this->Remove($obj['id']);
+		if ($this->hasID($obj['id'])) $this->remove($obj['id']);
 		
 		
 	
 		// Normalize string (strip non-alpha numeric, make lower case)
-		$normalized = $this->Normalize($obj['phrase']);
+		$normalized = $this->normalize($obj['phrase']);
 	
 		// Split phrase into normalized words
-		$words = $this->Words($normalized);
+		$words = $this->words($normalized);
 	
 		// Get prefixes for each word
-		$prefixes = $this->WordPrefixes($words);
+		$prefixes = $this->wordPrefixes($words);
 		
 		foreach ($prefixes as $prefix) {
 			// Add the prefix and its identifier to the set
-			$this->redis->zadd($this->PrefixKey($prefix), $obj['score'], $obj['id']);
+			$this->redis->zadd($this->prefixKey($prefix), $obj['score'], $obj['id']);
 		}
 		
 		
 		// Store the phrase that is associated with the ID in a hash
-		$this->redis->hset($this->MetaKey('ids'), $obj['id'], $normalized);
+		$this->redis->hset($this->metaKey('ids'), $obj['id'], $normalized);
 		
 		// If data is passed in with it, then store the data as well
-		$this->redis->hset($this->MetaKey('objects'), $obj['id'], json_encode($obj));
+		$this->redis->hset($this->metaKey('objects'), $obj['id'], json_encode($obj));
 		
 		return true;
 		
@@ -134,10 +134,10 @@ class RedisAutocomplete {
 	public function find($phrase, $count = 10) {
 		
 		// Normalize the words
-		$normalized = $this->Normalize($phrase);
+		$normalized = $this->normalize($phrase);
 		
 		// Get a normalized array of all the words
-		$words = $this->Words($normalized);
+		$words = $this->words($normalized);
 		if (count($words) == 0) return array();
 		
 		// Sort them for caching purposes (e.g. both "man power" and "power man" will
@@ -145,11 +145,11 @@ class RedisAutocomplete {
 		sort($words);
 		$joined = implode('_', $words);
 		
-		$key = $this->PrefixKey('cache:' . $joined);
+		$key = $this->prefixKey('cache:' . $joined);
 		
 		foreach ($words as &$w) {
 			// Replace the words with their respective prefix keys
-			$w = $this->PrefixKey($w);
+			$w = $this->prefixKey($w);
 		}
 		
 		$objects = false;
@@ -178,7 +178,7 @@ class RedisAutocomplete {
 				
 				$range = $this->redis->zrevrange($key, 0, $count);
 			}
-			$objects = $range ? $this->redis->hmget($this->MetaKey('objects'), $range) : array();
+			$objects = $range ? $this->redis->hmget($this->metaKey('objects'), $range) : array();
 			
 			foreach ($objects as &$obj) {
 				$obj = json_decode($obj, true);
