@@ -85,7 +85,7 @@ class RedisAutocomplete {
 		return $this->redis->hget($this->metaKey('ids'), $id);
 	}
 	
-	public function store($id, $phrase = NULL, $score = 1, $data = NULL) {
+	public function store($id, $phrase, $score = 1, $data = NULL) {
 		
 		$obj = array();
 		if (is_array($id)) $obj = $id;
@@ -97,10 +97,6 @@ class RedisAutocomplete {
 			'phrase' => $phrase,
 			'data' => $data,
 		), $obj);
-		
-		
-		// Must have an ID and a phrase
-		if ($obj['id'] === NULL || $obj['phrase'] === NULL) return false;
 		
 		if ($obj['data'] === NULL) unset($obj['data']);
 		
