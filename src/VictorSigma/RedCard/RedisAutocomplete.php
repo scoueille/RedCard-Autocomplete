@@ -108,9 +108,6 @@ class RedisAutocomplete {
 		$prefixes = $this->wordPrefixes($words);
 		
 		foreach ($prefixes as $prefix) {
-
-			var_dump($this->keyGen($bin,':', $prefix));
-
 			// Add the prefix and its identifier to the set
 			$this->redis->zadd($this->keyGen($bin,':', $prefix), $obj['score'], $obj['id']);
 		}
