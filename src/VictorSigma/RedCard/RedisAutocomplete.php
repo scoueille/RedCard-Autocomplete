@@ -184,13 +184,16 @@ class RedisAutocomplete {
 				$obj = json_decode($obj, true);
 			}
 			// Cache the results for ten minutes
-			if ($isCaching) $this->redis->set($key, json_encode($objects));
+			if ($isCaching){
+				$this->redis->set($key, json_encode($objects));
+				$this->redis->expire($key, self::MINUTE * 10);
+			} 
 		} else {
 			// Unserialize the cache
 			$objects = json_decode($objects, true);
 		}
 		
-		$this->redis->expire($key, self::MINUTE * 10);
+		
 		
 		return $objects;
 	}
