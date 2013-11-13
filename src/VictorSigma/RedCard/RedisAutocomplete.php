@@ -60,29 +60,25 @@ class RedisAutocomplete {
 		return $array;
 	}
 	
-	private function prefixKey($prefix) {
-		return $this->domainPrefix . ':' . $this->bin . ':' . $prefix;
-	}
-	
-	private function metaKey($suffix) {
-		return $this->domainPrefix . ':' . $this->bin . '>' . $suffix;
+	private function keyGen($operator, $suffix){
+		return $this->domainPrefix . ':' . $this->bin . $operator . $suffix;
 	}
 	
 	public function remove($id) {
-		$phrase = $this->redis->hget($this->metaKey('ids'), $id);
+		$phrase = $this->redis->hget($this->keyGen('>', 'ids'), $id);
 		if (!$phrase) return false;
 		
 		$prefixes = $this->wordPrefixes(explode(' ', $phrase));
 		
 		foreach ($prefixes as $prefix) {
-			$this->redis->zrem($this->prefixKey($prefix), $id);
+			$this->redis->zrem($this->keyGen(':', $prefix), $id);
 		}
-		$this->redis->hdel($this->metaKey('ids'), $id);
-		$this->redis->hdel($this->metaKey('objects'), $id);
+		$this->redis->hdel($this->keyGen('>', 'ids'), $id);
+		$this->redis->hdel($this->keyGen('>', 'objects'), $id);
 	}
 	
 	public function hasID($id) {
-		return $this->redis->hget($this->metaKey('ids'), $id);
+		return $this->redis->hget($this->keyGen('>', 'ids'), $id);
 	}
 	
 	public function store($id, $phrase, $score = 1, $data = NULL) {
@@ -115,15 +111,15 @@ class RedisAutocomplete {
 		
 		foreach ($prefixes as $prefix) {
 			// Add the prefix and its identifier to the set
-			$this->redis->zadd($this->prefixKey($prefix), $obj['score'], $obj['id']);
+			$this->redis->zadd($this->keyGen(':', $prefix), $obj['score'], $obj['id']);
 		}
 		
 		
 		// Store the phrase that is associated with the ID in a hash
-		$this->redis->hset($this->metaKey('ids'), $obj['id'], $normalized);
+		$this->redis->hset($this->keyGen('>', 'ids'), $obj['id'], $normalized);
 		
 		// If data is passed in with it, then store the data as well
-		$this->redis->hset($this->metaKey('objects'), $obj['id'], json_encode($obj));
+		$this->redis->hset($this->keyGen('>', 'objects'), $obj['id'], json_encode($obj));
 		
 		return true;
 		
@@ -143,11 +139,11 @@ class RedisAutocomplete {
 		sort($words);
 		$joined = implode('_', $words);
 		
-		$key = $this->prefixKey('cache:' . $joined);
+		$key = $this->keyGen(':', 'cache:' . $joined);
 		
 		foreach ($words as &$w) {
 			// Replace the words with their respective prefix keys
-			$w = $this->prefixKey($w);
+			$w = $this->keyGen(':', $w);
 		}
 		
 		$objects = false;
@@ -176,7 +172,7 @@ class RedisAutocomplete {
 				
 				$range = $this->redis->zrevrange($key, 0, $count);
 			}
-			$objects = $range ? $this->redis->hmget($this->metaKey('objects'), $range) : array();
+			$objects = $range ? $this->redis->hmget($this->keyGen('>', 'objects'), $range) : array();
 			
 			foreach ($objects as &$obj) {
 				$obj = json_decode($obj, true);
