@@ -18,7 +18,18 @@ class RedCardServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		//
+		$this->app['redcard'] = $this->app->share(function($app)
+		{
+			return new RedisAutocomplete( $this->app['redis'] ); 
+		});
+
+        // Shortcut so developers don't need to add an Alias in app/config/app.php
+        $this->app->booting(function()
+        {
+            $loader = \Illuminate\Foundation\AliasLoader::getInstance();
+            $loader->alias('RedCard', 'VictorSigma\RedCard\Facade');
+        });
+
 	}
 
 	/**
@@ -28,7 +39,7 @@ class RedCardServiceProvider extends ServiceProvider {
 	 */
 	public function provides()
 	{
-		return array();
+		return array('redcard');
 	}
 
 }
