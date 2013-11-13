@@ -1,16 +1,26 @@
 {
-    "name": "rishair/php-redis-autocomplete",
-    "type": "library",
+    "name": "victor-sigma/red-card",
     "description": "Autocomplete implementation using PHP and Redis",
-    "homepage": "https://github.com/rishair/php-redis-autocomplete",
     "license": "MIT",
+    "homepage": "https://github.com/VictorSigma/RedCard-Autocomplete",
     "authors": [
         {
             "name": "Rishi Ishairzay",
             "email": "windowasher@gmail.com"
+        },
+        {
+            "name": "Luke Nilaratna",
+            "email": "luke@0is1.com"
         }
     ],
+    "require": {
+        "php": ">=5.3.0",
+        "illuminate/support": "4.0.x"
+    },
     "autoload": {
-        "classmap": ["lib/"]
-    }
+        "psr-0": {
+            "VictorSigma\\RedCard": "src/"
+        }
+    },
+    "minimum-stability": "dev"
 }
