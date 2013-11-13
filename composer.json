@@ -3,6 +3,7 @@
     "description": "Autocomplete implementation using PHP and Redis",
     "license": "MIT",
     "homepage": "https://github.com/VictorSigma/RedCard-Autocomplete",
+    "keywords": ["autocomplete", "redis", "laravel", "search", "cache"],
     "authors": [
         {
             "name": "Rishi Ishairzay",
