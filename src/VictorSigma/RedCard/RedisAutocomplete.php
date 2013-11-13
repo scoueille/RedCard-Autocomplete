@@ -12,12 +12,10 @@ class RedisAutocomplete {
 	);
 	
 	private $redis;
-	private $bin;
 	private $domainPrefix;
 	
-	public function __construct($redis, $bin = '', $domainPrefix = 'rCard') {
+	public function __construct($redis, $domainPrefix = 'rCard') {
 		$this->redis = $redis;
-		$this->bin = $bin;
 		$this->domainPrefix = $domainPrefix;
 	}
 	
@@ -60,28 +58,28 @@ class RedisAutocomplete {
 		return $array;
 	}
 	
-	private function keyGen($operator, $suffix){
-		return $this->domainPrefix . ':' . $this->bin . $operator . $suffix;
+	private function keyGen($bin, $operator, $suffix){
+		return $this->domainPrefix . ':' . $bin . $operator . $suffix;
 	}
 	
-	public function remove($id) {
-		$phrase = $this->redis->hget($this->keyGen('>', 'ids'), $id);
+	public function remove($id, $bin = '') {
+		$phrase = $this->redis->hget($this->keyGen($bin,'>', 'ids'), $id);
 		if (!$phrase) return false;
 		
 		$prefixes = $this->wordPrefixes(explode(' ', $phrase));
 		
 		foreach ($prefixes as $prefix) {
-			$this->redis->zrem($this->keyGen(':', $prefix), $id);
+			$this->redis->zrem($this->keyGen($bin,':', $prefix), $id);
 		}
-		$this->redis->hdel($this->keyGen('>', 'ids'), $id);
-		$this->redis->hdel($this->keyGen('>', 'objects'), $id);
+		$this->redis->hdel($this->keyGen($bin,'>', 'ids'), $id);
+		$this->redis->hdel($this->keyGen($bin,'>', 'objects'), $id);
 	}
 	
-	public function hasID($id) {
-		return $this->redis->hget($this->keyGen('>', 'ids'), $id);
+	public function hasID($id, $bin) {
+		return $this->redis->hget($this->keyGen($bin,'>', 'ids'), $id);
 	}
 	
-	public function store($id, $phrase, $score = 1, $data = NULL) {
+	public function store($id, $phrase, $bin = '', $score = 1, $data = NULL) {
 		
 		$obj = array();
 		if (is_array($id)) $obj = $id;
@@ -96,10 +94,10 @@ class RedisAutocomplete {
 		
 		if ($obj['data'] === NULL) unset($obj['data']);
 		
-		if ($this->hasID($obj['id'])) $this->remove($obj['id']);
-		
-		
-	
+		if ($this->hasID($obj['id'], $bin)){
+			$this->remove($obj['id'], $bin);
+		}
+			
 		// Normalize string (strip non-alpha numeric, make lower case)
 		$normalized = $this->normalize($obj['phrase']);
 	
@@ -110,22 +108,25 @@ class RedisAutocomplete {
 		$prefixes = $this->wordPrefixes($words);
 		
 		foreach ($prefixes as $prefix) {
+
+			var_dump($this->keyGen($bin,':', $prefix));
+
 			// Add the prefix and its identifier to the set
-			$this->redis->zadd($this->keyGen(':', $prefix), $obj['score'], $obj['id']);
+			$this->redis->zadd($this->keyGen($bin,':', $prefix), $obj['score'], $obj['id']);
 		}
 		
 		
 		// Store the phrase that is associated with the ID in a hash
-		$this->redis->hset($this->keyGen('>', 'ids'), $obj['id'], $normalized);
+		$this->redis->hset($this->keyGen($bin,'>', 'ids'), $obj['id'], $normalized);
 		
 		// If data is passed in with it, then store the data as well
-		$this->redis->hset($this->keyGen('>', 'objects'), $obj['id'], json_encode($obj));
+		$this->redis->hset($this->keyGen($bin,'>', 'objects'), $obj['id'], json_encode($obj));
 		
 		return true;
 		
 	}
 	
-	public function find($phrase, $count = 10, $isCaching = true) {
+	public function find($phrase, $bin = '', $count = 10, $isCaching = true) {
 		
 		// Normalize the words
 		$normalized = $this->normalize($phrase);
@@ -139,11 +140,11 @@ class RedisAutocomplete {
 		sort($words);
 		$joined = implode('_', $words);
 		
-		$key = $this->keyGen(':', 'cache:' . $joined);
+		$key = $this->keyGen($bin,':', 'cache:' . $joined);
 		
 		foreach ($words as &$w) {
 			// Replace the words with their respective prefix keys
-			$w = $this->keyGen(':', $w);
+			$w = $this->keyGen($bin,':', $w);
 		}
 		
 		$objects = false;
@@ -172,7 +173,7 @@ class RedisAutocomplete {
 				
 				$range = $this->redis->zrevrange($key, 0, $count);
 			}
-			$objects = $range ? $this->redis->hmget($this->keyGen('>', 'objects'), $range) : array();
+			$objects = $range ? $this->redis->hmget($this->keyGen($bin,'>', 'objects'), $range) : array();
 			
 			foreach ($objects as &$obj) {
 				$obj = json_decode($obj, true);
