@@ -16,20 +16,7 @@ class RedisAutocomplete {
 	
 	public function __construct($redis, $bin) {
 		$this->redis = $redis;
-		
-		if (!$bin) return;
-		call_user_func_array(array($this, 'SetBin'), func_get_args());
-	}
-	
-	// Set the bin
-	public function setBin($bin) {
-		if (func_num_args() > 1) 	$bin = func_get_args();
-		else						$bin = array($bin);
-		if (is_array($bin)) {
-			foreach ($bin as &$b) $b = $this->Normalize($b);
-			$bin = implode(':', $bin);
-		}
-		return $this->bin = $bin;
+		$this->bin = $bin;
 	}
 	
 	// Take a string and remove unalphabetic characters and make it lowercase
