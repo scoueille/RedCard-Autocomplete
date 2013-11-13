@@ -17,6 +17,9 @@
         "php": ">=5.3.0",
         "illuminate/support": "4.0.x"
     },
+    "require-dev":{
+        "predis/predis": "dev-master"
+    },
     "autoload": {
         "psr-0": {
             "VictorSigma\\RedCard": "src/"
