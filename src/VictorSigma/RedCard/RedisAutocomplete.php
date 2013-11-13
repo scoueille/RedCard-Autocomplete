@@ -13,10 +13,12 @@ class RedisAutocomplete {
 	
 	private $redis;
 	private $bin;
+	private $domainPrefix;
 	
-	public function __construct($redis, $bin) {
+	public function __construct($redis, $bin = '', $domainPrefix = 'rCard') {
 		$this->redis = $redis;
 		$this->bin = $bin;
+		$this->domainPrefix = $domainPrefix;
 	}
 	
 	// Take a string and remove unalphabetic characters and make it lowercase
@@ -59,11 +61,11 @@ class RedisAutocomplete {
 	}
 	
 	private function prefixKey($prefix) {
-		return 'auto:' . $this->bin . ':' . $prefix;
+		return $this->domainPrefix . ':' . $this->bin . ':' . $prefix;
 	}
 	
 	private function metaKey($suffix) {
-		return 'auto:' . $this->bin . '>' . $suffix;
+		return $this->domainPrefix . ':' . $this->bin . '>' . $suffix;
 	}
 	
 	public function remove($id) {
