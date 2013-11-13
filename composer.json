@@ -1,5 +1,5 @@
 {
-    "name": "victor-sigma/red-card",
+    "name": "victorsigma/redcard",
     "description": "Autocomplete implementation using PHP and Redis",
     "license": "MIT",
     "homepage": "https://github.com/VictorSigma/RedCard-Autocomplete",
