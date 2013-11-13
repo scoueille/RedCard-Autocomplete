@@ -123,7 +123,7 @@ class RedisAutocomplete {
 		
 	}
 	
-	public function find($phrase, $bin = '', $count = 10, $isCaching = true) {
+	public function find($phrase, $bin = '', $count = 10, $isCaching = false) {
 		
 		// Normalize the words
 		$normalized = $this->normalize($phrase);
