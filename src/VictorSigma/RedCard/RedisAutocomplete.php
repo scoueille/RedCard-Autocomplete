@@ -1,4 +1,4 @@
-<?php
+<?php namespace VictorSigma\RedCard;
 
 class RedisAutocomplete {
 
@@ -22,7 +22,7 @@ class RedisAutocomplete {
 	}
 	
 	// Set the bin
-	public function SetBin($bin) {
+	public function setBin($bin) {
 		if (func_num_args() > 1) 	$bin = func_get_args();
 		else						$bin = array($bin);
 		if (is_array($bin)) {
@@ -33,14 +33,14 @@ class RedisAutocomplete {
 	}
 	
 	// Take a string and remove unalphabetic characters and make it lowercase
-	private function Normalize($phrase) {
+	private function normalize($phrase) {
 		$phrase = preg_replace('~, ?~', '_', $phrase);
 		$phrase = preg_replace('~[^a-z0-9_ ]+~', '', strtolower($phrase));
 		return $phrase;
 	}
 	
 	// Take a string, normalize it then return an array of words to match against
-	public function Words($phrase) {
+	public function words($phrase) {
 		$phrase = explode(' ', $phrase);
 		$filtered = array();
 		
@@ -53,7 +53,7 @@ class RedisAutocomplete {
 		return $filtered;
 	}
 	
-	public function WordPrefixes($word) {
+	public function wordPrefixes($word) {
 		$array = array();
 		if (is_array($word)) {
 			// If an array of words is passed in then recursively call on each element
@@ -71,15 +71,15 @@ class RedisAutocomplete {
 		return $array;
 	}
 	
-	private function PrefixKey($prefix) {
+	private function prefixKey($prefix) {
 		return 'auto:' . $this->bin . ':' . $prefix;
 	}
 	
-	private function MetaKey($suffix) {
+	private function metaKey($suffix) {
 		return 'auto:' . $this->bin . '>' . $suffix;
 	}
 	
-	public function Remove($id) {
+	public function remove($id) {
 		$phrase = $this->redis->hget($this->MetaKey('ids'), $id);
 		if (!$phrase) return false;
 		
@@ -92,11 +92,11 @@ class RedisAutocomplete {
 		$this->redis->hdel($this->MetaKey('objects'), $id);
 	}
 	
-	public function HasID($id) {
+	public function hasID($id) {
 		return $this->redis->hget($this->MetaKey('ids'), $id);
 	}
 	
-	public function Store($id, $phrase = NULL, $score = 1, $data = NULL) {
+	public function store($id, $phrase = NULL, $score = 1, $data = NULL) {
 		
 		$obj = array();
 		if (is_array($id)) $obj = $id;
@@ -144,7 +144,7 @@ class RedisAutocomplete {
 		
 	}
 	
-	public function Find($phrase, $count = 10) {
+	public function find($phrase, $count = 10) {
 		
 		// Normalize the words
 		$normalized = $this->Normalize($phrase);
