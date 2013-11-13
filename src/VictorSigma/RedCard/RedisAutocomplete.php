@@ -131,7 +131,7 @@ class RedisAutocomplete {
 		
 	}
 	
-	public function find($phrase, $count = 10) {
+	public function find($phrase, $count = 10, $isCaching = true) {
 		
 		// Normalize the words
 		$normalized = $this->normalize($phrase);
@@ -184,7 +184,7 @@ class RedisAutocomplete {
 				$obj = json_decode($obj, true);
 			}
 			// Cache the results for ten minutes
-			$this->redis->set($key, json_encode($objects));
+			if ($isCaching) $this->redis->set($key, json_encode($objects));
 		} else {
 			// Unserialize the cache
 			$objects = json_decode($objects, true);
