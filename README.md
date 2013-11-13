@@ -1,4 +1,4 @@
-Redis Autocomplete
+RedCard Autocomplete
 ==================
 
 Autocomplete implementation using PHP+Redis.
