@@ -17,9 +17,9 @@ class helloTest extends PHPUnit_Framework_TestCase {
 
         $this->redis = new Predis\Client(array(
             'scheme' => 'tcp',
-            'host'   => 'localhost',
+            'host'   => 'USE YOUR OWN SETTINGS. WARNING WE WILL FLUSH THE DB FOR THIS TEST!',
             'port'   => 6379,
-        ));
+        )); 
 
         $this->ra = new RedisAutocomplete( $this->redis );
     }
