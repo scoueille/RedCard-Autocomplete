@@ -124,6 +124,9 @@ class RedisAutocomplete {
 	}
 	
 	public function find($phrase, $bin = '', $count = 10, $isCaching = false) {
+
+		// We use zero based counting so we need to minus 1 to get the correct number of items
+		$count = $count-1;
 		
 		// Normalize the words
 		$normalized = $this->normalize($phrase);

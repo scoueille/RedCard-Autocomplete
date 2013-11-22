@@ -2,7 +2,7 @@
 
 use VictorSigma\RedCard\RedisAutocomplete;
 
-class helloTest extends PHPUnit_Framework_TestCase {
+class simpleTest extends PHPUnit_Framework_TestCase {
 
     private $ra;
     private $redis;
@@ -173,5 +173,32 @@ class helloTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(2, count($results) );
 
     }
+
+    public function test_Find_Count_Returns_The_Right_Amount_Of_Items()
+    {
+        $this->redis->FLUSHALL();
+
+        $this->ra->store(2, "cat");
+        $this->ra->store(3, "care");
+        $this->ra->store(4, "caress");
+        $this->ra->store(5, "cars");
+        $this->ra->store(6, "camera");
+        $this->ra->store(7, "camera");
+        $this->ra->store(8, "camera");
+        $this->ra->store("car", "camera");
+        $this->ra->store(9, "camera");
+        $this->ra->store(10, "camera");
+        $this->ra->store(11, "camera");
+        $this->ra->store(12, "camera");
+
+
+        $this->ra->store(3, "phone");
+
+        $results = $this->ra->find("ca", '', 10);
+
+        $this->assertEquals(10, count($results) );
+
+    }
+
 
 }
