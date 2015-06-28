@@ -9,7 +9,7 @@ This library handles a basic implementation of autocomplete with sorted results 
 
 ## Installation
 
-Add `victorsigma/redcard` as a requirement to `composer.json`:
+Add `mochaka/redcard` as a requirement to `composer.json`:
 
 ```javascript
 {
@@ -33,7 +33,7 @@ In the `$providers` array add the service providers for this package.
 
         [...]
 
-        'VictorSigma\RedCard\RedCardServiceProvider'
+        'Mochaka\RedCard\RedCardServiceProvider'
     ),
 
 
@@ -48,7 +48,7 @@ You will need to create a Predis Client Instance and provide it to the autocompl
         'port'   => 6379,
     ));
 
-    $autocomplete = new VictorSigma\RedCard\RedisAutocomplete( $redis );
+    $autocomplete = new Mochaka\RedCard\RedisAutocomplete( $redis );
 
     // You are ready to go!
 ```
