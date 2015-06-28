@@ -14,23 +14,23 @@ Add `victorsigma/redcard` as a requirement to `composer.json`:
 ```javascript
 {
     "require": {
-        "victorsigma/redcard": "dev-master"
+        "mochaka/redcard": "dev-master"
     }
 }
 ```
 
 Update your packages with `composer update` or install with `composer install`.
 
-### Laravel 4 Integration
+### Laravel 5 Integration
 
-The RedCard supports Laravel 4 integration. Best practice to use the library in Laravel 4 is to add the ServiceProvider.
+The RedCard supports Laravel 5 integration. Best practice to use the library in Laravel 5 is to add the ServiceProvider.
 
 Open your Laravel config file `config/app.php` and add the following lines.
 
 In the `$providers` array add the service providers for this package.
-    
+
     'providers' => array(
-        
+
         [...]
 
         'VictorSigma\RedCard\RedCardServiceProvider'
@@ -38,10 +38,10 @@ In the `$providers` array add the service providers for this package.
 
 
 ### Standalone
- 
-You will need to create a Predis Client Instance and provide it to the autocomplete class. 
 
-```php   
+You will need to create a Predis Client Instance and provide it to the autocomplete class.
+
+```php
     $redis = new Predis\Client(array(
         'scheme' => 'tcp',
         'host'   => 'localhost',
@@ -90,9 +90,9 @@ var_dump($results)
 
 ```
 
-## Bins 
+## Bins
 
-Different types of data can be distinguished from one another through bins. Each bin has its own name and when searching and removing they will not conflict with one another. 
+Different types of data can be distinguished from one another through bins. Each bin has its own name and when searching and removing they will not conflict with one another.
 
 ### Laravel
 
@@ -136,33 +136,33 @@ The basic functions that you need to be aware of to utilize RedCard.
 - **store**: store a new item to autocomplete
 
 	```php
-	    store($id, $phrase, $bin = '', $score = 1, $data = NULL) 
+	    store($id, $phrase, $bin = '', $score = 1, $data = NULL)
 	```
 
-	example 
+	example
 	```php
 	    RedCard::store('id123', "Clockwork Orange", "Books", 3, array('author'=>'Anthony Burgess'))
 	```
 
 
-- **find**: find an item. Searches are cached in a seperate hash. 
+- **find**: find an item. Searches are cached in a seperate hash.
 
 	```php
 	    find($phrase, $bin = '', $count = 10, $isCaching = true)
 	```
 
-	example 
+	example
 	```php
 	    RedCard::find("Clock", "Books" , 1, true)
 	```
 
-- **remove**: remove an item from a bin. Searches are cached in a seperate hash. 
+- **remove**: remove an item from a bin. Searches are cached in a seperate hash.
 
 	```php
 	    remove($id, $bin = '')
 	```
 
-	example 
+	example
 	```php
 	    RedCard::remove('id123', 'Books')
 	```
@@ -174,4 +174,4 @@ The basic functions that you need to be aware of to utilize RedCard.
 ## License
 
 RedCard Autocomplete is licensed under the [MIT License](http://opensource.org/licenses/MIT).
-Original Copyright (c) 2011 Rishi Ishairzay, released under the MIT license   
+Original Copyright (c) 2011 Rishi Ishairzay, released under the MIT license
