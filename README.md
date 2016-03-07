@@ -117,6 +117,16 @@ The basic functions that you need to be aware of to utilize RedCard.
 	```
 
 
+- **clear**: clear all items.
+
+	```php
+	    clear()
+	```
+
+	example
+	```php
+	    $autocomplete->clear()
+	```
 
 
 
