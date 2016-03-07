@@ -14,30 +14,14 @@ Add `mochaka/redcard` as a requirement to `composer.json`:
 ```javascript
 {
     "require": {
-        "mochaka/redcard": "dev-master"
+        "jsidorenko/redcard": "dev-master"
     }
 }
 ```
 
 Update your packages with `composer update` or install with `composer install`.
 
-### Laravel 5 Integration
-
-The RedCard supports Laravel 5 integration. Best practice to use the library in Laravel 5 is to add the ServiceProvider.
-
-Open your Laravel config file `config/app.php` and add the following lines.
-
-In the `$providers` array add the service providers for this package.
-
-    'providers' => array(
-
-        [...]
-
-        'Mochaka\RedCard\RedCardServiceProvider'
-    ),
-
-
-### Standalone
+### Integration
 
 You will need to create a Predis Client Instance and provide it to the autocomplete class.
 
@@ -48,33 +32,16 @@ You will need to create a Predis Client Instance and provide it to the autocompl
         'port'   => 6379,
     ));
 
-    $autocomplete = new Mochaka\RedCard\RedisAutocomplete( $redis );
+    $autocomplete = new JSidorenko\RedCard\RedisAutocomplete( $redis );
+    or
+    $autocomplete = new JSidorenko\RedCard\RedisAutocomplete( $redis, "yourDomainPrefix" );
 
-    // You are ready to go!
+    instead of "yourDomainPrefix" you can write something like "users" or "locations"
 ```
 
 ## Basic Usage
 
 To store data you must have a unique ID for an item and the phrase that should be searchable.
-
-### Laravel
-
-```php
-
-RedCard::store(2, "cat");
-RedCard::store(3, "care");
-RedCard::store("MYCRAZYID", "caress");
-RedCard::store(55, "cars");
-RedCard::store(6, "camera");
-
-$results = RedCard::find("car");
-
-var_dump($results)
-
-```
-
-
-### Standalone
 
 ```php
 
@@ -93,24 +60,6 @@ var_dump($results)
 ## Bins
 
 Different types of data can be distinguished from one another through bins. Each bin has its own name and when searching and removing they will not conflict with one another.
-
-### Laravel
-
-```php
-
-RedCard::store(2, "Mary", "users");
-RedCard::store(3, "Sally", "users");
-RedCard::store(4, "Leo", "users" );
-
-RedCard::store(5, "Mary Had A Litte Lamb", "blog-title");
-RedCard::store(6, "Redis Rocks, A Life Story", "blog-title");
-
-$results = RedCard::find("Mary", "users");
-
-// Will only return Mary instead of "Mary Had A Litte Lamb"
-```
-
-### Standalone
 
 ```php
 
@@ -141,7 +90,7 @@ The basic functions that you need to be aware of to utilize RedCard.
 
 	example
 	```php
-	    RedCard::store('id123', "Clockwork Orange", "Books", 3, array('author'=>'Anthony Burgess'))
+	    $autocomplete->store('id123', "Clockwork Orange", "Books", 3, array('author'=>'Anthony Burgess'))
 	```
 
 
@@ -153,10 +102,10 @@ The basic functions that you need to be aware of to utilize RedCard.
 
 	example
 	```php
-	    RedCard::find("Clock", "Books" , 1, true)
+	    $autocomplete->find("Clock", "Books" , 1, true)
 	```
 
-- **remove**: remove an item from a bin. Searches are cached in a seperate hash.
+- **remove**: remove an item from a bin. Searches are cached in a separate hash.
 
 	```php
 	    remove($id, $bin = '')
@@ -164,7 +113,7 @@ The basic functions that you need to be aware of to utilize RedCard.
 
 	example
 	```php
-	    RedCard::remove('id123', 'Books')
+	    $autocomplete->remove('id123', 'Books')
 	```
 
 

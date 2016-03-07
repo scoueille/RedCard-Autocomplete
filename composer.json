@@ -1,8 +1,8 @@
 {
-    "name": "mochaka/redcard",
+    "name": "jsidorenko/redcard",
     "description": "Autocomplete implementation using PHP and Redis",
     "license": "MIT",
-    "homepage": "https://github.com/VictorSigma/RedCard-Autocomplete",
+    "homepage": "https://github.com/jsidorenko/RedCard-Autocomplete",
     "keywords": ["autocomplete", "redis", "laravel", "search", "cache"],
     "authors": [
         {
@@ -19,15 +19,14 @@
         }
     ],
     "require": {
-        "php": ">=5.3.0",
-        "illuminate/support": "~5"
+        "php": ">=5.3.0"
     },
     "require-dev":{
         "predis/predis": "dev-master"
     },
     "autoload": {
         "psr-0": {
-            "Mochaka\\RedCard": "src/"
+            "JSidorenko\\RedCard": "src/"
         }
     },
     "minimum-stability": "dev"

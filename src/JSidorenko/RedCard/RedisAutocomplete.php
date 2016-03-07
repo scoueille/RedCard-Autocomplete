@@ -1,6 +1,6 @@
 <?php
 
-namespace Mochaka\RedCard;
+namespace JSidorenko\RedCard;
 
 class RedisAutocomplete
 {
@@ -16,13 +16,13 @@ class RedisAutocomplete
     private $redis;
     private $domainPrefix;
 
-    public function __construct($redis, $domainPrefix = 'rCard')
+    public function __construct($redis, $domainPrefix = 'locations')
     {
         $this->redis = $redis;
         $this->domainPrefix = $domainPrefix;
     }
 
-    // Take a string and remove unalphabetic characters and make it lowercase
+    // Take a string and remove non-alphabetic characters and make it lowercase
     private function normalize($phrase)
     {
         $phrase = preg_replace('~, ?~', '_', $phrase);
@@ -213,5 +213,13 @@ class RedisAutocomplete
         }
 
         return $objects;
+    }
+    
+    public function clear()
+    {
+        $keys = $this->redis->keys($this->domainPrefix.':*');
+        foreach ($keys as $key) {
+            $this->redis->del($key);
+        }
     }
 }

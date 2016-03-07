@@ -1,6 +1,6 @@
 <?php
 
-use VictorSigma\RedCard\RedisAutocomplete;
+use JSidorenko\RedCard\RedisAutocomplete;
 
 class simpleTest extends PHPUnit_Framework_TestCase {
 
