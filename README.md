@@ -93,7 +93,6 @@ The basic functions that you need to be aware of to utilize RedCard.
 	    $autocomplete->store('id123', "Clockwork Orange", "Books", 3, array('author'=>'Anthony Burgess'))
 	```
 
-
 - **find**: find an item. Searches are cached in a seperate hash.
 
 	```php
@@ -102,7 +101,18 @@ The basic functions that you need to be aware of to utilize RedCard.
 
 	example
 	```php
-	    $autocomplete->find("Clock", "Books" , 1, true)
+	    $autocomplete->find("Clock", "Books", 1, true)
+	```
+
+- **find by ID**: find an item by provided ID. Returns null if nothing found.
+
+	```php
+	    findByID($id, $bin = '')
+	```
+
+	example
+	```php
+	    $autocomplete->findByID('id123')
 	```
 
 - **remove**: remove an item from a bin. Searches are cached in a separate hash.

@@ -222,4 +222,14 @@ class RedisAutocomplete
             $this->redis->del($key);
         }
     }
+
+    public function findByID($id, $bin = '')
+    {
+        if(!$this->hasID($id, $bin))
+            return null;
+
+        $obj = $this->redis->hget($this->keyGen($bin, '>', 'objects'), $id);
+        return json_decode($obj, true);
+    }
+
 }
