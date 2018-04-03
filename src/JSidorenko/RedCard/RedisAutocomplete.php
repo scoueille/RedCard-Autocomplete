@@ -61,10 +61,10 @@ class RedisAutocomplete
     // Take a string and remove non-alphabetic characters and make it lowercase
     private function normalize($phrase)
     {
-        $phrase = preg_replace('~, ?~', '_', $phrase);
+        $phrase = preg_replace('~, ?~', '_', $this->removeaccents($phrase));
         $phrase = preg_replace('~[^a-z0-9_ ]+~', '', strtolower($phrase));
 
-        return $this->removeaccents($phrase);
+        return $phrase;
     }
 
     // Take a string, normalize it then return an array of words to match against
