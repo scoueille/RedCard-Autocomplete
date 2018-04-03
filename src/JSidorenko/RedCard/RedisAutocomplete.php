@@ -11,6 +11,36 @@ class RedisAutocomplete
     'and' => 1,
     'or' => 1,
     'the' => 1,
+    'a' => 1,
+    'au' => 1,
+    'aux' => 1,
+    'de' => 1,
+    'du' => 1,
+    'le' => 1,
+    'la' => 1,
+    'les' => 1,
+    'des' => 1,
+    'un' => 1,
+    'une' => 1,
+    'sa' => 1,
+    'son' => 1,
+    'se' => 1,
+    'ses' => 1,
+    'sur' => 1,
+    'ou' => 1,
+    'et' => 1,
+    'pour' => 1,
+    'avec' => 1,
+    'ce' => 1,
+    'ces' => 1,
+    'cette' => 1,
+    'en' => 1,
+    'ne' => 1,
+    'par' => 1,
+    'pas' => 1,
+    'que' => 1,
+    'qui' => 1,
+    'quoi' => 1,
     );
 
     private $redis;
@@ -22,13 +52,19 @@ class RedisAutocomplete
         $this->domainPrefix = $domainPrefix;
     }
 
+    public function removeaccents($str) {
+        $str = utf8_decode($str);
+        $str = strtr($str, utf8_decode("ÀÁÂÃÄÅàáâãäåÒÓÔÕÖØòóôõöøÈÉÊËèéêëÇçÌÍÎÏìíîïÙÚÛÜùúûüÿÑñ"), "aaaaaaaaaaaaooooooooooooeeeeeeeecciiiiiiiiuuuuuuuuynn");
+        return $str;
+    }
+    
     // Take a string and remove non-alphabetic characters and make it lowercase
     private function normalize($phrase)
     {
         $phrase = preg_replace('~, ?~', '_', $phrase);
         $phrase = preg_replace('~[^a-z0-9_ ]+~', '', strtolower($phrase));
 
-        return $phrase;
+        return $this->removeaccents($phrase);
     }
 
     // Take a string, normalize it then return an array of words to match against
