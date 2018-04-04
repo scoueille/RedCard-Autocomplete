@@ -211,7 +211,7 @@ class RedisAutocomplete
         // Check the cache to see if we stored the intersection already
         try {
             $objects = $this->redis->get($key);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
         }
 
         if (!$objects) {
