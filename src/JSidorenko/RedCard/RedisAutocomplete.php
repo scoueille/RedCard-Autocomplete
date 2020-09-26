@@ -55,7 +55,10 @@ class RedisAutocomplete
     public function removeaccents($str) {
         $str = utf8_decode($str);
         $str = strtr($str, utf8_decode("ÀÁÂÃÄÅàáâãäåÒÓÔÕÖØòóôõöøÈÉÊËèéêëÇçÌÍÎÏìíîïÙÚÛÜùúûüÿÑñ"), "aaaaaaaaaaaaooooooooooooeeeeeeeecciiiiiiiiuuuuuuuuynn");
-        return $str;
+        $replace = array(
+            'œ' => 'oe',
+        );
+        return str_replace(array_keys($replace), array_values($replace), $str);
     }
     
     // Take a string and remove non-alphabetic characters and make it lowercase
