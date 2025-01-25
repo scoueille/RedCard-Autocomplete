@@ -53,12 +53,40 @@ class RedisAutocomplete
     }
 
     public function removeaccents($str) {
-        $str = utf8_decode($str);
-        $str = strtr($str, utf8_decode("ÀÁÂÃÄÅàáâãäåÒÓÔÕÖØòóôõöøÈÉÊËèéêëÇçÌÍÎÏìíîïÙÚÛÜùúûüÿÑñ"), "aaaaaaaaaaaaooooooooooooeeeeeeeecciiiiiiiiuuuuuuuuynn");
-        $replace = array(
-            'œ' => 'oe',
-        );
-        return str_replace(array_keys($replace), array_values($replace), $str);
+        // Table de translittération pour remplacer les caractères accentués par leurs équivalents non accentués
+        $transliterationTable = [
+            'À' => 'A', 'Á' => 'A', 'Â' => 'A', 'Ã' => 'A', 'Ä' => 'A', 'Å' => 'A',
+            'à' => 'a', 'á' => 'a', 'â' => 'a', 'ã' => 'a', 'ä' => 'a', 'å' => 'a',
+            'Ò' => 'O', 'Ó' => 'O', 'Ô' => 'O', 'Õ' => 'O', 'Ö' => 'O', 'Ø' => 'O',
+            'ò' => 'o', 'ó' => 'o', 'ô' => 'o', 'õ' => 'o', 'ö' => 'o', 'ø' => 'o',
+            'È' => 'E', 'É' => 'E', 'Ê' => 'E', 'Ë' => 'E',
+            'è' => 'e', 'é' => 'e', 'ê' => 'e', 'ë' => 'e',
+            'Ç' => 'C', 'ç' => 'c',
+            'Ì' => 'I', 'Í' => 'I', 'Î' => 'I', 'Ï' => 'I',
+            'ì' => 'i', 'í' => 'i', 'î' => 'i', 'ï' => 'i',
+            'Ù' => 'U', 'Ú' => 'U', 'Û' => 'U', 'Ü' => 'U',
+            'ù' => 'u', 'ú' => 'u', 'û' => 'u', 'ü' => 'u',
+            'ÿ' => 'y', 'Ñ' => 'N', 'ñ' => 'n',
+            'œ' => 'oe', 'Œ' => 'OE',
+            
+            // Lettres supplémentaires
+            'Æ' => 'AE', 'æ' => 'ae',
+            'Þ' => 'TH', 'þ' => 'th',
+            'Đ' => 'D', 'đ' => 'd',
+            'Ł' => 'L', 'ł' => 'l',
+            'Š' => 'S', 'š' => 's',
+            'Ž' => 'Z', 'ž' => 'z',
+            'Ā' => 'A', 'ā' => 'a',
+            'Ē' => 'E', 'ē' => 'e',
+            'Ī' => 'I', 'ī' => 'i',
+            'Ō' => 'O', 'ō' => 'o',
+            'Ū' => 'U', 'ū' => 'u',
+        ];
+    
+        // Remplacement des caractères accentués
+        $str = strtr($str, $transliterationTable);
+    
+        return $str;
     }
     
     // Take a string and remove non-alphabetic characters and make it lowercase
