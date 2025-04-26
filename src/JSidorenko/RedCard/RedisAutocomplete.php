@@ -253,13 +253,7 @@ class RedisAutocomplete
             } else {
 
                 // Find the intersection of all the results and store it in a separate key
-                call_user_func_array(
-                    array($this->redis, 'zinterstore'), array_merge(
-                        array(
-                        $key, count($words),
-                        ), $words
-                    )
-                );
+                $this->redis->zinterstore($key, $words, ['aggregate' => 'sum']);
 
                 $range = $this->redis->zrevrange($key, 0, $count);
             }
